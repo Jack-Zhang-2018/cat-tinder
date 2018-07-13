@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { Redirect } from 'react-router'
 import { Label, FormControl, Button } from 'react-bootstrap'
 
 class NewCat extends Component {
@@ -21,7 +22,7 @@ class NewCat extends Component {
     }
 
   render() {
-      console.log("This is the current form:",this.state.form);
+      let { form } = this.state
     return (
         <div>
             <div>
@@ -52,7 +53,8 @@ class NewCat extends Component {
                 placeholder="Enter text" required/>
             </div><br/>
             <div>
-                <Button onClick={()=>{this.props.handleSubmit(this.state.form)}} id='submit' bsSize="large" block>Create Cat Profile</Button>
+                <Button onClick={()=>{this.props.handleSubmit(form)}} id='submit' bsSize="large" block>Create Cat Profile</Button>
+                {this.props.success && <Redirect to="/cats" />}
             </div>
         </div>
     );

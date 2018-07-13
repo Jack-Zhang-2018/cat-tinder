@@ -3,52 +3,51 @@ import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom'
 import Header from './components/Header'
 import Cats from './pages/Cats'
 import NewCat from './pages/NewCat'
+import { getCats,createCat } from './api'
+
 
 class App extends Component {
 
     constructor(props){
-    super(props)
-    this.state = {
-        cats: [
-            {
-              id: 1,
-              name: 'Morris',
-              age: 2,
-              enjoys: "Long walks on the beach."
-            },
-            {
-              id: 2,
-              name: 'Paws',
-              age: 4,
-              enjoys: "Snuggling by the fire."
-            },
-            {
-              id: 3,
-              name: 'Mr. Meowsalot',
-              age: 12,
-              enjoys: "Being in charge."
-            }
-        ]
-    }
+        super(props)
+        this.state = {
+            cats: [],
+            newCatSuccess: false
+        }
     }
 
     handleSubmit(newCat){
-        console.log(newCat);
-        let { cats } = this.state
-        cats.push(newCat)
-        console.log("This is the updated cats array: ", cats);
-        this.setState({cats: cats})
+        console.log("New Cat TRY", newCat)
+        createCat(newCat)
+        .then(successCat => {
+        console.log("CREATE SUCCESS!", successCat);
+        let newKitty = this.state.cats
+        newKitty.push(successCat)
+        this.setState({
+            newCatSuccess: true,
+            cats: newKitty
+        })
+    })
+    }
+
+    componentWillMount() {
+        getCats()
+        .then(APIcats => {
+            this.setState({
+                cats: APIcats
+        })
+    })
     }
 
     render() {
-        console.log("The Current State Is:",this.state.cats);
+
         return (
             <div>
             <Header />
                 <Router>
                     <Switch>
 
-                    <Route exact path="/" render={(props) => <NewCat handleSubmit={this.handleSubmit.bind(this)}/>} />
+                    <Route exact path="/" render={(props) => <NewCat handleSubmit={this.handleSubmit.bind(this)} success = {this.state.newCatSuccess}/>} />
 
                     <Route path="/cats" render={(props) => <Cats cats={this.state.cats}/>} />
 
